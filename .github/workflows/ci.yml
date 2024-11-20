@@ -3,7 +3,8 @@ name: ci
 on:
  push:
 
-uv-example:
+jobs:
+uv-tst:
     name: python
     runs-on: ubuntu-latest
     strategy:
