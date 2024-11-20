@@ -4,7 +4,7 @@ on:
  push:
 
 jobs:
-uv-tst:
+  uv-tst:
     name: python
     runs-on: ubuntu-latest
     strategy:
