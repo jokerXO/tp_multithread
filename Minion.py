@@ -1,16 +1,18 @@
 from multiprocessing.managers import BaseManager
 import time
 
+
 class QueueClient(BaseManager):
     pass
 
+
 if __name__ == "__main__":
     # Enregistrement des queues côté client
-    QueueClient.register('get_task_queue')
-    QueueClient.register('get_result_queue')
+    QueueClient.register("get_task_queue")
+    QueueClient.register("get_result_queue")
 
     # Connexion au serveur
-    client = QueueClient(address=('127.0.0.1', 50000), authkey=b'abc')
+    client = QueueClient(address=("127.0.0.1", 50000), authkey=b"abc")
     client.connect()
 
     # Récupérer les queues
@@ -25,7 +27,7 @@ if __name__ == "__main__":
             time.sleep(2)  # Simuler un traitement
             task.work()
             result_queue.put(task)
-            print(f"Minion: tache traitee !")
+            print("Minion: tache traitee !")
         else:
             print("Minion: Attente...")
             time.sleep(1)
