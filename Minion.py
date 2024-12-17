@@ -1,33 +1,28 @@
 from multiprocessing.managers import BaseManager
 import time
+from manager import QueueClient
 
 
-class QueueClient(BaseManager):
-    pass
+class Minion(QueueClient):
+    def __init__(self, host, port, authkey):
+        super().__init__(host, port, authkey)
 
-
-if __name__ == "__main__":
-    # Enregistrement des queues côté client
-    QueueClient.register("get_task_queue")
-    QueueClient.register("get_result_queue")
-
-    # Connexion au serveur
-    client = QueueClient(address=("127.0.0.1", 50000), authkey=b"abc")
-    client.connect()
-
-    # Récupérer les queues
-    task_queue = client.get_task_queue()
-    result_queue = client.get_result_queue()
-
-    print("Minion: En attente de tâches...")
-    while True:
-        if not task_queue.empty():
-            task = task_queue.get()
-            print(f"Minion: Traitement de {task}")
-            time.sleep(2)  # Simuler un traitement
+    def execute(self):
+        print("Minion: Waiting for tasks...")
+        while True:
+            task = self.task_queue.get()
+            if task is None:  # End signal
+                break
+            print(f"Minion: Working on {task}")
             task.work()
-            result_queue.put(task)
-            print("Minion: tache traitee !")
-        else:
-            print("Minion: Attente...")
-            time.sleep(1)
+            print(f"Minion: Completed {task}")
+            self.result_queue.put(task)
+            
+if __name__ == "__main__":
+    HOST = '127.0.0.1'
+    PORT = 5000
+    AUTHKEY = b'abc'
+
+    client = Minion(HOST, PORT, AUTHKEY)
+    client.connect_to_server()
+    client.execute()
